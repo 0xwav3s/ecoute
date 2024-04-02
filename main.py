@@ -123,6 +123,9 @@ def main():
     update_response_UI(responder, response_textbox, update_interval_slider_label, update_interval_slider, freeze_state)
  
     root.mainloop()
+    # while True:
+    #     # Main loop to keep the program running
+    #     time.sleep(0.1)
 
 if __name__ == "__main__":
     main()

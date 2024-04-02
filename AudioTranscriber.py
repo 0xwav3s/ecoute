@@ -7,8 +7,12 @@ import tempfile
 import custom_speech_recognition as sr
 import io
 from datetime import timedelta
-import pyaudiowpatch as pyaudio
+import pyaudio
 from heapq import merge
+# from googletrans import Translator
+
+# Create a translator object
+# translator = Translator()
 
 PHRASE_TIMEOUT = 3.05
 
@@ -58,6 +62,9 @@ class AudioTranscriber:
                 os.unlink(path)
 
             if text != '' and text.lower() != 'you':
+                # translated_text = translator.translate(text, src='en', dest='vi')
+                # text+= " (" +translated_text.text+ ")"
+                # print(f"{who_spoke}: [{text}]")
                 self.update_transcript(who_spoke, text, time_spoken)
                 self.transcript_changed_event.set()
 
@@ -89,7 +96,6 @@ class AudioTranscriber:
     def update_transcript(self, who_spoke, text, time_spoken):
         source_info = self.audio_sources[who_spoke]
         transcript = self.transcript_data[who_spoke]
-
         if source_info["new_phrase"] or len(transcript) == 0:
             if len(transcript) > MAX_PHRASES:
                 transcript.pop(-1)
