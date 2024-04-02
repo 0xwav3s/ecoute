@@ -72,8 +72,8 @@ def main():
         print("ERROR: The ffmpeg library is not installed. Please install ffmpeg and try again.")
         return
 
-    root = ctk.CTk()
-    transcript_textbox, response_textbox, update_interval_slider, update_interval_slider_label, freeze_button = create_ui_components(root)
+    # root = ctk.CTk()
+    # transcript_textbox, response_textbox, update_interval_slider, update_interval_slider_label, freeze_button = create_ui_components(root)
 
     audio_queue = queue.Queue()
 
@@ -99,30 +99,33 @@ def main():
 
     print("READY")
 
-    root.grid_rowconfigure(0, weight=100)
-    root.grid_rowconfigure(1, weight=1)
-    root.grid_rowconfigure(2, weight=1)
-    root.grid_rowconfigure(3, weight=1)
-    root.grid_columnconfigure(0, weight=2)
-    root.grid_columnconfigure(1, weight=1)
+    # root.grid_rowconfigure(0, weight=100)
+    # root.grid_rowconfigure(1, weight=1)
+    # root.grid_rowconfigure(2, weight=1)
+    # root.grid_rowconfigure(3, weight=1)
+    # root.grid_columnconfigure(0, weight=2)
+    # root.grid_columnconfigure(1, weight=1)
 
-     # Add the clear transcript button to the UI
-    clear_transcript_button = ctk.CTkButton(root, text="Clear Transcript", command=lambda: clear_context(transcriber, audio_queue, ))
-    clear_transcript_button.grid(row=1, column=0, padx=10, pady=3, sticky="nsew")
+    #  # Add the clear transcript button to the UI
+    # clear_transcript_button = ctk.CTkButton(root, text="Clear Transcript", command=lambda: clear_context(transcriber, audio_queue, ))
+    # clear_transcript_button.grid(row=1, column=0, padx=10, pady=3, sticky="nsew")
 
-    freeze_state = [False]  # Using list to be able to change its content inside inner functions
-    def freeze_unfreeze():
-        freeze_state[0] = not freeze_state[0]  # Invert the freeze state
-        freeze_button.configure(text="Unfreeze" if freeze_state[0] else "Freeze")
+    # freeze_state = [False]  # Using list to be able to change its content inside inner functions
+    # def freeze_unfreeze():
+    #     freeze_state[0] = not freeze_state[0]  # Invert the freeze state
+    #     freeze_button.configure(text="Unfreeze" if freeze_state[0] else "Freeze")
 
-    freeze_button.configure(command=freeze_unfreeze)
+    # freeze_button.configure(command=freeze_unfreeze)
 
-    update_interval_slider_label.configure(text=f"Update interval: {update_interval_slider.get()} seconds")
+    # update_interval_slider_label.configure(text=f"Update interval: {update_interval_slider.get()} seconds")
 
-    update_transcript_UI(transcriber, transcript_textbox)
-    update_response_UI(responder, response_textbox, update_interval_slider_label, update_interval_slider, freeze_state)
+    # update_transcript_UI(transcriber, transcript_textbox)
+    # update_response_UI(responder, response_textbox, update_interval_slider_label, update_interval_slider, freeze_state)
  
-    root.mainloop()
+    # root.mainloop()
+    while True:
+        # Main loop to keep the program running
+        time.sleep(0.1)
 
 if __name__ == "__main__":
     main()
