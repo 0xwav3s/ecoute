@@ -1,4 +1,36 @@
 
+### Record audio playing from computer (macOS)
+
+To record audio playing from an application on your computer, you may install an audio loopback driver (a program that
+lets you create virtual audio devices). The rest of this guide will
+use [BlackHole](https://github.com/ExistentialAudio/BlackHole) on Mac, but you can use other alternatives for your
+operating system (
+see [LoopBeAudio](https://nerds.de/en/loopbeaudio.html), [LoopBack](https://rogueamoeba.com/loopback/),
+and [Virtual Audio Cable](https://vac.muzychenko.net/en/)).
+
+1. Install [BlackHole via Homebrew](https://github.com/ExistentialAudio/BlackHole#option-2-install-via-homebrew)
+
+   ```shell
+   brew install blackhole-2ch
+   ```
+
+2. Open Audio MIDI Setup from Spotlight or from `/Applications/Utilities/Audio Midi Setup.app`.
+
+   ![Open Audio MIDI Setup from Spotlight](https://existential.audio/howto/img/spotlight.png)
+
+3. Click the '+' icon at the lower left corner and select 'Create Multi-Output Device'.
+
+   ![Create multi-output device](https://existential.audio/howto/img/createmulti-output.png)
+
+4. Add your default speaker and BlackHole to the multi-output device.
+
+   ![Screenshot of multi-output device](https://existential.audio/howto/img/multi-output.png)
+
+5. Select this multi-output device as your speaker (application or system-wide) to play audio into BlackHole.
+
+6. Open Buzz, select BlackHole as your microphone, and record as before to see transcriptions from the audio playing
+   through BlackHole.
+   
 # 🎧 Ecoute
 
 Ecoute is a live transcription tool that provides real-time transcripts for both the user's microphone input (You) and the user's speakers output (Speaker) in a textbox. It also generates a suggested response using OpenAI's GPT-3.5 for the user to say based on the live transcription of the conversation.
@@ -102,3 +134,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🤝 Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests to improve Ecoute.
+
