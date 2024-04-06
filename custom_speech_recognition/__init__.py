@@ -560,7 +560,7 @@ class Recognizer(AudioSource):
 
         return AudioData(frame_data, source.SAMPLE_RATE, source.SAMPLE_WIDTH)
 
-    def listen_in_background(self, source, callback, phrase_time_limit=None):
+    def listen_in_background(self, source, callback, phrase_time_limit=None, time_out=0):
         """
         Spawns a thread to repeatedly record phrases from ``source`` (an ``AudioSource`` instance) into an ``AudioData`` instance and call ``callback`` with that ``AudioData`` instance as soon as each phrase are detected.
 
@@ -577,7 +577,7 @@ class Recognizer(AudioSource):
             with source as s:
                 while running[0]:
                     try:  # listen for 1 second, then check again if the stop function has been called
-                        audio = self.listen(s, 1, phrase_time_limit)
+                        audio = self.listen(s, time_out, phrase_time_limit)
                     except WaitTimeoutError:  # listening timed out, just try again
                         pass
                     else:

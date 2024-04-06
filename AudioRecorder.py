@@ -3,9 +3,11 @@ import pyaudio
 from datetime import datetime
 import utils
 
-RECORD_TIMEOUT = 3
+RECORD_TIMEOUT = 1
+# RECORD_TIMEOUT = 0.01
+time_out = 1
 ENERGY_THRESHOLD = 1000
-DYNAMIC_ENERGY_THRESHOLD = False
+DYNAMIC_ENERGY_THRESHOLD = True
 
 class BaseRecorder:
     def __init__(self, source, source_name):
@@ -30,7 +32,7 @@ class BaseRecorder:
             data = audio.get_raw_data()
             audio_queue.put((self.source_name, data, datetime.utcnow()))
 
-        self.recorder.listen_in_background(self.source, record_callback, phrase_time_limit=RECORD_TIMEOUT)
+        self.recorder.listen_in_background(self.source, record_callback, phrase_time_limit=RECORD_TIMEOUT, time_out=time_out)
 
 class DefaultMicRecorder(BaseRecorder):
     def __init__(self):
@@ -59,7 +61,6 @@ class DefaultSpeakerRecorder(BaseRecorder):
                                chunk_size=pyaudio.get_sample_size(pyaudio.paInt16),
                                channels=default_speakers["maxOutputChannels"])
 
-        # source=sr.Microphone(speaker=True)
         super().__init__(source=source, source_name="Speaker")
 
         self.adjust_for_noise(default_speakers["name"], "Please make or play some noise from the Default Speaker...")

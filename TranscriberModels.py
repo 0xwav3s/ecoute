@@ -3,6 +3,8 @@ import whisper
 import os
 import torch
 
+model_size = "large-v3"
+
 def get_model(use_api):
     if use_api:
         return APIWhisperTranscriber()
@@ -15,12 +17,12 @@ class WhisperTranscriber:
         print(f"[INFO] Whisper using GPU: " + str(torch.cuda.is_available()))
 
     def get_transcription(self, wav_file_path):
+        result = ''
         try:
             result = self.audio_model.transcribe(wav_file_path, fp16=torch.cuda.is_available())
         except Exception as e:
             print(e)
-            return ''
-        return result['text'].strip()
+        return result
     
 class APIWhisperTranscriber:
     def get_transcription(self, wav_file_path):
@@ -30,4 +32,6 @@ class APIWhisperTranscriber:
         except Exception as e:
             print(e)
             return ''
-        return result['text'].strip()
+        # return result['text'].strip()
+        return result
+    

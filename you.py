@@ -95,12 +95,12 @@ def main():
 
     time.sleep(2)
 
-    speaker_audio_recorder = AudioRecorder.DefaultSpeakerRecorder()
-    speaker_audio_recorder.record_into_queue(audio_queue)
+    # speaker_audio_recorder = AudioRecorder.DefaultSpeakerRecorder()
+    # speaker_audio_recorder.record_into_queue(audio_queue)
 
     model = TranscriberModels.get_model('--api' in sys.argv)
 
-    transcriber = AudioTranscriber(user_audio_recorder.source, speaker_audio_recorder.source, model)
+    transcriber = AudioTranscriber(user_audio_recorder.source, None, model)
     transcribe = threading.Thread(target=transcriber.transcribe_audio_queue, args=(audio_queue,))
     transcribe.daemon = True
     transcribe.start()
@@ -123,22 +123,9 @@ def main():
     clear_transcript_button = ctk.CTkButton(root, text="Clear Transcript", command=lambda: clear_context(transcriber, audio_queue, ))
     clear_transcript_button.grid(row=1, column=0, padx=10, pady=3, sticky="nsew")
 
-    # freeze_state = [False]  # Using list to be able to change its content inside inner functions
-    # def freeze_unfreeze():
-    #     freeze_state[0] = not freeze_state[0]  # Invert the freeze state
-    #     freeze_button.configure(text="Unfreeze" if freeze_state[0] else "Freeze")
-
-    # freeze_button.configure(command=freeze_unfreeze)
-
-    # update_interval_slider_label.configure(text=f"Update interval: {update_interval_slider.get()} seconds")
-
     update_transcript_UI(transcriber, transcript_textbox)
-    # update_response_UI(responder, response_textbox, update_interval_slider_label, update_interval_slider, freeze_state)
  
     root.mainloop()
-    # while True:
-    #     # Main loop to keep the program running
-    #     time.sleep(0.1)
 
 if __name__ == "__main__":
     main()
