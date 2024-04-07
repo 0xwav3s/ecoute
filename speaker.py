@@ -20,7 +20,7 @@ def write_in_textbox(textbox, text):
 def update_transcript_UI(transcriber, textbox):
     transcript_string = transcriber.get_transcript()
     write_in_textbox(textbox, transcript_string)
-    textbox.after(300, update_transcript_UI, transcriber, textbox)
+    textbox.after(100, update_transcript_UI, transcriber, textbox)
 
 def update_response_UI(responder, textbox, update_interval_slider_label, update_interval_slider, freeze_state):
     if not freeze_state[0]:
@@ -42,16 +42,25 @@ def clear_context(transcriber, audio_queue):
         audio_queue.queue.clear()
 
 def create_ui_components(root):
-    ctk.set_appearance_mode("dark")
-    ctk.set_default_color_theme("dark-blue")
-    root.title("Speaker")
-    # root.configure(bg='#252422')
-    # root.geometry("1000x600")
-    root.attributes("-alpha", 0.8)
+    # ctk.set_appearance_mode("dark")
+    # ctk.set_default_color_theme("dark-blue")
+    # root.title("Speaker")
+    
+    # Hide title bar
+    root.overrideredirect(True)
+
+    root.attributes("-alpha", 0.65)
+   # Get screen width and height
     screen_width = root.winfo_screenwidth()
-    window_width = int(0.4 * screen_width)
     screen_height = root.winfo_screenheight()
-    root.geometry(f"{window_width}x{screen_height}+{root.winfo_screenwidth() - window_width}+0")
+
+    # Calculate desired width and height based on screen size
+    window_width = int(screen_width)
+    window_height = int(0.3 * screen_height)
+
+    # Set window geometry to fill the entire width and 30% of the height, and lock it at the bottom of the screen
+    root.geometry(f"{window_width}x{window_height}+0+{screen_height - window_height}")
+
 
     font_size = 20
 
@@ -90,18 +99,14 @@ def main():
 
     audio_queue = queue.Queue()
 
-    time.sleep(2)
-
-    speaker_audio_recorder = AudioRecorder.DefaultSpeakerRecorder()
-    speaker_audio_recorder.record_into_queue(audio_queue)
-
     model = TranscriberModels.get_model('--api' in sys.argv)
 
-    transcriber = AudioTranscriber(None, speaker_audio_recorder.source, model)
-    transcribe = threading.Thread(target=transcriber.transcribe_audio_queue, args=(audio_queue,))
-    transcribe.daemon = True
-    transcribe.start()
+    time.sleep(2)
 
+    
+    thread = threading.Thread(target=transcribe_thread, args=(audio_queue, model, transcript_textbox,))
+    thread.daemon = True
+    thread.start()
     # responder = GPTResponder()
     # respond = threading.Thread(target=responder.respond_to_transcriber, args=(transcriber,))
     # respond.daemon = True
@@ -117,12 +122,31 @@ def main():
     # root.grid_columnconfigure(1, weight=1)
 
     #  Add the clear transcript button to the UI
-    clear_transcript_button = ctk.CTkButton(root, text="Clear Transcript", command=lambda: clear_context(transcriber, audio_queue, ))
-    clear_transcript_button.grid(row=1, column=0, padx=10, pady=3, sticky="nsew")
+    # clear_transcript_button = ctk.CTkButton(root, text="Clear Transcript", command=lambda: clear_context(transcriber, audio_queue, ))
+    # clear_transcript_button.grid(row=1, column=0, padx=10, pady=3, sticky="nsew")
 
-    update_transcript_UI(transcriber, transcript_textbox)
  
     root.mainloop()
+
+semaphore = threading.Semaphore(6)
+import utils
+def transcribe_thread(audio_queue, model, transcript_textbox):
+    speaker_audio_recorder = AudioRecorder.DefaultSpeakerRecorder()
+    speaker_audio_recorder.record_into_queue(audio_queue)
+    transcriber = AudioTranscriber(None, speaker_audio_recorder.source, model)
+    lenThread = threading.active_count()
+    while True:
+        who_spoke, data, time_spoken = audio_queue.get()
+        transcribe = threading.Thread(target=transcriber.transcribe_audio_queue, args=(who_spoke, data, time_spoken,))
+        transcribe.daemon = True
+        transcribe.start()
+        update_transcript_UI(transcriber, transcript_textbox)
+        print("Active threads after starting new thread:", threading.active_count()-lenThread)
+        cpu_usage = utils.check_cpu_usage()
+        memory_usage = utils.check_cpu_usage()
+        print(f"CPU Usage: {cpu_usage}%, Memory Usage: {memory_usage}%")
+        semaphore.release()
+
 
 if __name__ == "__main__":
     main()
