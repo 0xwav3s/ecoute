@@ -5,7 +5,7 @@ import utils
 
 RECORD_TIMEOUT = 2
 # RECORD_TIMEOUT = 0.01
-time_out = 1
+time_out = 0
 ENERGY_THRESHOLD = 1000
 DYNAMIC_ENERGY_THRESHOLD = True
 

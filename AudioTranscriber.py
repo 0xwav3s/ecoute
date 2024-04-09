@@ -67,7 +67,7 @@ class AudioTranscriber:
             source_info["process_data_func"](source_info["last_sample"], path)
             result = self.audio_model.get_transcription(path)
             text = result['text'].strip()
-            print(text)
+            # print(text)
         except Exception as e:
             print(e)
         finally:
@@ -78,7 +78,7 @@ class AudioTranscriber:
             text += f"\n({translated_text.text})"
             end_time = time.time()
             duration = end_time - start_time
-            print("Duration:" + str(duration))
+            # print("Duration:" + str(duration))
             self.update_transcript(who_spoke, text, time_spoken)
             self.transcript_changed_event.set()
 
@@ -185,8 +185,10 @@ class AudioTranscriber:
         combined_transcript = list(merge(
             self.transcript_data["You"], self.transcript_data["Speaker"], 
             key=lambda x: x[1], reverse=True))
-        combined_transcript = combined_transcript[:MAX_PHRASES]
         return "".join([t[0] for t in combined_transcript])
+
+    def is_new_phase(self, who_spoke):
+        return self.audio_sources[who_spoke]["new_phrase"]
     
     def clear_transcript_data(self):
         self.transcript_data["You"].clear()

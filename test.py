@@ -1,27 +1,22 @@
-import tkinter as tk
+import re
 
-root = tk.Tk()
+# Pattern to match lowercase, uppercase letters, and numbers
+pattern = r"[a-zA-Z0-9]+"
 
-# Ẩn tiêu đề và thanh viền của cửa sổ
-root.overrideredirect(True)
+# Sample text
+text1 = ".\n(.)"  # Match
+text2 = "Okay, interesting."  # No match
 
-# Lấy kích thước của màn hình
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
+# Check for the pattern
+match1 = re.search(pattern, text1)
+match2 = re.search(pattern, text2)
 
-# Tạo một frame để chứa label, sử dụng để có thể thiết lập nền trong suốt
-frame = tk.Frame(root, bg="white", width=screen_width, height=screen_height)
-frame.pack(fill="both", expand=True)
+if match1:
+  print(f"'{text1}' contains only letters and numbers.")
+else:
+  print(f"'{text1}' might not contain only letters and numbers.")
 
-# Tạo một label để hiển thị nội dung
-label_text = "Your label content"
-label = tk.Label(frame, text=label_text, bg="white", fg="black", font=("Arial", 18))
-label.place(relx=0.5, rely=0.5, anchor="center")
-
-# Thiết lập cửa sổ để nền trong suốt
-root.attributes("-alpha", 0)
-
-# Thiết lập kích thước và vị trí của cửa sổ
-root.geometry(f"{screen_width}x{screen_height}+0+0")
-
-root.mainloop()
+if match2:
+  print(f"'{text2}' contains only letters and numbers (unexpected).")  # Adjust message for unexpected matches
+else:
+  print(f"'{text2}' does not contain only letters and numbers (as expected).")

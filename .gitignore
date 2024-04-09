@@ -2,3 +2,8 @@ __pycache__/
 *.wav
 keys.py
 .venv/
+.env
+conversation/*
+cookies
+GPT/cookies
+.vscode/

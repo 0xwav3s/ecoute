@@ -58,8 +58,8 @@ def create_ui_components(root):
     transcript_textbox = ctk.CTkTextbox(root, width=window_width, font=("Arial", font_size), text_color='#FFFCF2', wrap="word")
     transcript_textbox.grid(row=0, column=0, padx=10, pady=20, sticky="nsew")
 
-    # response_textbox = ctk.CTkTextbox(root, width=300, font=("Arial", font_size), text_color='#639cdc', wrap="word")
-    # response_textbox.grid(row=0, column=1, padx=10, pady=20, sticky="nsew")
+    response_textbox = ctk.CTkTextbox(root, width=300, font=("Arial", font_size), text_color='#639cdc', wrap="word")
+    response_textbox.grid(row=0, column=1, padx=10, pady=20, sticky="nsew")
 
     # freeze_button = ctk.CTkButton(root, text="Freeze", command=None)
     # freeze_button.grid(row=2, column=0, padx=10, pady=3, sticky="nsew")
@@ -75,7 +75,7 @@ def create_ui_components(root):
     root.attributes("-topmost", True)
 
     # return transcript_textbox, update_interval_slider, update_interval_slider_label, freeze_button
-    return transcript_textbox
+    return transcript_textbox, response_textbox
 
 def main():
     try:
@@ -86,7 +86,7 @@ def main():
 
     root = ctk.CTk()
     # transcript_textbox, update_interval_slider, update_interval_slider_label, freeze_button = create_ui_components(root)
-    transcript_textbox = create_ui_components(root)
+    transcript_textbox, response_textbox = create_ui_components(root)
 
     audio_queue = queue.Queue()
 
@@ -105,10 +105,10 @@ def main():
     transcribe.daemon = True
     transcribe.start()
 
-    # responder = GPTResponder()
-    # respond = threading.Thread(target=responder.respond_to_transcriber, args=(transcriber,))
-    # respond.daemon = True
-    # respond.start()
+    responder = GPTResponder()
+    respond = threading.Thread(target=responder.respond_to_transcriber, args=(transcriber,))
+    respond.daemon = True
+    respond.start()
 
     print("READY")
 
@@ -133,7 +133,7 @@ def main():
     # update_interval_slider_label.configure(text=f"Update interval: {update_interval_slider.get()} seconds")
 
     update_transcript_UI(transcriber, transcript_textbox)
-    # update_response_UI(responder, response_textbox, update_interval_slider_label, update_interval_slider, freeze_state)
+    update_response_UI(responder, response_textbox)
  
     root.mainloop()
     # while True:

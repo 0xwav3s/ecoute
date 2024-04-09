@@ -9,7 +9,11 @@
             "type": "debugpy",
             "request": "launch",
             "program": "speaker.py",
-            "python": "python3.9",  // Specify Python 3.9 interpreter
+            "args": [  // List of arguments
+                "--file",
+                "my_data.txt"
+            ],
+            // "python": "python3.9",  // Specify Python 3.9 interpreter
             "console": "integratedTerminal"
         }
     ]
