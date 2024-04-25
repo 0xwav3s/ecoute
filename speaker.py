@@ -4,14 +4,12 @@ from GPTResponder import GPTSelenium
 import customtkinter as ctk
 import AudioRecorder 
 import queue
-import time
-import torch
 import sys
 import TranscriberModels
 import subprocess
 import os
 import argparse
-
+import utils
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 f = None
 def write_in_textbox(textbox, text):
@@ -107,11 +105,15 @@ def main():
         parser.add_argument("--file", type=str, required=True, help="Path to the file to process.")
         args = parser.parse_args()
         f = open("conversation/" + args.file + ".txt", "a")
+        
     speaker_audio_recorder = AudioRecorder.DefaultSpeakerRecorder()
     speaker_audio_recorder.record_into_queue(audio_queue)
 
     transcriber = AudioTranscriber(None, speaker_audio_recorder.source, model)
     responder = GPTSelenium()
+    # responder = {
+    #     "response" : ""
+    # }
 
     thread = threading.Thread(target=transcribe_thread, args=(audio_queue,transcript_textbox, transcriber, responder, response_textbox,))
     thread.daemon = True
@@ -129,17 +131,11 @@ def main():
     root.grid_rowconfigure(3, weight=1)
     root.grid_columnconfigure(0, weight=2)
     root.grid_columnconfigure(1, weight=1)
-
-    #  Add the clear transcript button to the UI
-    # clear_transcript_button = ctk.CTkButton(root, text="Clear Transcript", command=lambda: clear_context(transcriber, audio_queue, ))
-    # clear_transcript_button.grid(row=1, column=0, padx=10, pady=3, sticky="nsew")
-
  
     root.mainloop()
 
 semaphore = threading.Semaphore(6)
-last_spoken = None
-import utils
+
 def transcribe_thread(audio_queue, transcript_textbox, transcriber, responder, response_textbox):
     lenThread = threading.active_count()
     global f
@@ -155,15 +151,13 @@ def transcribe_thread(audio_queue, transcript_textbox, transcriber, responder, r
         memory_usage = utils.check_cpu_usage()
         print(f"CPU Usage: {cpu_usage}%, Memory Usage: {memory_usage}%")
 
-        speaker_response, gpt_response = None
-        transcriber.respond_to_transcriber(transcriber, speaker_response, gpt_response)
-        # gpt_thread = threading.Thread(target=transcriber.respond_to_transcriber, args=(transcriber, speaker_response, gpt_response,))
-        # gpt_thread.daemon = True
-        # gpt_thread.start()
+        speaker_response, gpt_response = responder.respond_to_transcriber(transcriber)
+        
         update_response_UI(responder, response_textbox)
         if f != None:
             if speaker_response != None: f.write(f"Speaker: {speaker_response}")
             if gpt_response != None: f.write(f"GPT Response: {gpt_response}")
+            
         semaphore.release()
 
 

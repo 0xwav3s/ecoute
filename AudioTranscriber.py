@@ -15,7 +15,7 @@ import utils
 # Create a translator object
 translator = Translator()
 
-PHRASE_TIMEOUT = 12
+PHRASE_TIMEOUT = 4
 
 MAX_PHRASES = 4
 

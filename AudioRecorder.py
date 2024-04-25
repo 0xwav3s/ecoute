@@ -3,7 +3,7 @@ import pyaudio
 from datetime import datetime
 import utils
 
-RECORD_TIMEOUT = 2
+RECORD_TIMEOUT = 1
 # RECORD_TIMEOUT = 0.01
 time_out = 0
 ENERGY_THRESHOLD = 1000
